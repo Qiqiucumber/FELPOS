@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f31773">
 <title>FELPOS – Alfombras Tufting</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <style>
@@ -25,82 +26,87 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;ove
 #intro{
   position:fixed;inset:0;z-index:9000;
   background:var(--pink);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:0;
-  transition:opacity 0.5s ease;
+  display:flex;align-items:center;justify-content:center;
+  /* NO transition — snap out instantly to avoid logo ghost */
+  overflow:hidden;
 }
-#intro.fade-out{opacity:0;pointer-events:none;}
 #intro.gone{display:none;}
 
 .intro-logo-wrap{
   position:relative;
-  width:220px;height:310px;
+  /* Logo más grande: 75vw con máximo razonable */
+  width:75vw;
+  max-width:320px;
+  /* aspect ratio del logo original es 1414:2000 ≈ 0.707 */
+  height:calc(75vw * 1.414);
+  max-height:calc(320px * 1.414);
   display:flex;align-items:center;justify-content:center;
+  /* centrado perfecto vertical */
+  margin-top:-5vh;
 }
 .intro-logo-img{
-  width:220px;height:310px;
+  width:100%;height:100%;
   object-fit:contain;
   position:relative;z-index:2;
-  /* hide the bubble area — we'll overlay our own bubble */
+  display:block;
 }
 
-/* The animated bubble sits over the sheep's mouth area */
+/*
+  El chicle en el logo original está aproximadamente:
+  - horizontalmente: centrado (50%)
+  - verticalmente: 42% desde arriba del logo
+    (el logo tiene oveja arriba y letras abajo, el chicle está justo en la mitad)
+  Usamos top en vez de bottom para precisión.
+*/
 .intro-bubble{
   position:absolute;
-  /* roughly where the bubblegum is on the logo */
-  bottom:28%;
+  top:42%;
   left:50%;
-  transform:translate(-50%,0);
-  width:38px;height:38px;
+  /* tamaño base del chicle visible en el logo ~8% del ancho del logo-wrap */
+  width:8%;
+  height:8%;
   background:white;
   border-radius:50%;
   z-index:3;
-  transform-origin:center bottom;
-  animation:bubbleGrow 2.2s cubic-bezier(.25,.46,.45,.94) 0.4s forwards;
-}
-@keyframes bubbleGrow{
-  0%  {transform:translate(-50%,0) scale(1); opacity:1;}
-  60% {transform:translate(-50%,0) scale(8);  opacity:1;}
-  85% {transform:translate(-50%,0) scale(28); opacity:1;}
-  100%{transform:translate(-50%,0) scale(80); opacity:1;}
+  /* origin fijo en su propio centro */
+  transform:translate(-50%,-50%) scale(1);
+  /* crece desde su centro hasta cubrir toda la pantalla
+     sin difuminado, sin opacity changes, todo sólido */
+  animation:bubbleGrow 1.8s cubic-bezier(.55,0,.1,1) 0.5s forwards;
 }
 
-.intro-tagline{
-  font-size:0.72rem;letter-spacing:3px;text-transform:uppercase;
-  color:rgba(255,255,255,0.65);
-  margin-top:28px;
-  position:relative;z-index:2;
-  animation:tagFadeIn 0.5s ease 0.3s both;
+@keyframes bubbleGrow{
+  0%   { transform:translate(-50%,-50%) scale(1); }
+  100% { transform:translate(-50%,-50%) scale(120); }
 }
-@keyframes tagFadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
 /* ── NAV ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:500;
   padding:14px 20px;
   display:flex;align-items:center;justify-content:space-between;
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
+  background:var(--pink);
+  /* sin backdrop-filter para que el color sea sólido y coincida con la barra del iOS */
 }
 .nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .nav-logo-img{width:28px;height:39px;object-fit:contain;}
-.nav-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:var(--text);}
-.nav-logo-text span{color:var(--pink);}
+.nav-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px;color:white;}
+.nav-logo-text span{color:white;opacity:0.85;}
 .nav-cta-btn{
-  background:var(--pink);color:white;
+  background:white;color:var(--pink);
   padding:10px 20px;border-radius:100px;
   font-weight:700;font-size:0.82rem;letter-spacing:0.5px;
   text-decoration:none;
   white-space:nowrap;
   transition:box-shadow 0.3s,transform 0.2s;
 }
-.nav-cta-btn:hover{box-shadow:0 4px 20px var(--pink-glow);transform:translateY(-1px);}
+.nav-cta-btn:hover{box-shadow:0 4px 20px rgba(0,0,0,0.15);transform:translateY(-1px);}
 
 /* Desktop nav links (hidden on mobile) */
 .nav-links{display:none;gap:28px;list-style:none;}
-.nav-links a{color:var(--text-muted);text-decoration:none;font-size:0.8rem;font-weight:500;letter-spacing:1px;text-transform:uppercase;transition:color 0.3s;}
-.nav-links a:hover{color:var(--pink);}
+.nav-links a{color:rgba(255,255,255,0.75);text-decoration:none;font-size:0.8rem;font-weight:500;letter-spacing:1px;text-transform:uppercase;transition:color 0.3s;}
+.nav-links a:hover{color:white;}
+.nav-links .nav-cta{color:var(--pink)!important;}
 
 /* ── HERO ── */
 .hero{
@@ -367,24 +373,24 @@ textarea{resize:vertical;min-height:105px;}
 
 /* ── FOOTER ── */
 footer{
-  background:var(--bg);border-top:1px solid var(--border);
+  background:var(--pink);
   padding:28px 20px;
   display:flex;flex-direction:column;align-items:center;
   gap:16px;text-align:center;
 }
 .footer-logo{display:flex;align-items:center;gap:10px;}
 .footer-logo-img{width:26px;height:36px;object-fit:contain;}
-.footer-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:var(--text);}
-.footer-logo-text span{color:var(--pink);}
-footer p{font-size:0.75rem;color:var(--text-muted);}
+.footer-logo-text{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;letter-spacing:2px;color:white;}
+.footer-logo-text span{color:white;opacity:0.8;}
+footer p{font-size:0.75rem;color:rgba(255,255,255,0.7);}
 .social-links{display:flex;gap:10px;}
 .social-links a{
-  width:38px;height:38px;border:1px solid var(--border);
+  width:38px;height:38px;border:1px solid rgba(255,255,255,0.3);
   border-radius:10px;display:flex;align-items:center;justify-content:center;
   text-decoration:none;font-size:1rem;
   transition:border-color 0.3s,background 0.3s;
 }
-.social-links a:hover{border-color:var(--pink);background:rgba(243,23,115,0.06);}
+.social-links a:hover{border-color:white;background:rgba(255,255,255,0.15);}
 
 /* ── WA FLOAT ── */
 .wa-float{
@@ -443,7 +449,6 @@ footer p{font-size:0.75rem;color:var(--text-muted);}
     <img class="intro-logo-img" id="introLogoImg" alt="FELPOS">
     <div class="intro-bubble" id="introBubble"></div>
   </div>
-  <div class="intro-tagline">Alfombras Tufting ✦ Guatemala</div>
 </div>
 
 <!-- NAV -->
@@ -650,22 +655,17 @@ document.getElementById('introLogoImg').src = LOGO_SRC;
 document.getElementById('navLogoImg').src = LOGO_SRC;
 document.getElementById('footerLogoImg').src = LOGO_SRC;
 
-// ─── INTRO: chicle explota → pantalla blanca → slide-out ─────────────
+// ─── INTRO: chicle explota → snap out sin difuminados ────────────────
 const intro = document.getElementById('intro');
 const site  = document.getElementById('mainSite');
 
-// La animación CSS del chicle dura ~2.6s (keyframes bubbleGrow)
-// Al terminar → overlay blanco cubre todo → intro desaparece
+// La animación bubbleGrow dura 1.8s con delay 0.5s → total 2.3s
+// Cuando el círculo ya cubrió toda la pantalla (blanco sólido),
+// ocultamos el intro de golpe y mostramos el sitio — sin fade, sin ghost
 setTimeout(() => {
-  // Pinta el fondo blanco sobre el intro mientras el círculo ya llenó la pantalla
-  intro.style.background = '#ffffff';
-  // Pequeña pausa para que el blanco se vea limpio
-  setTimeout(() => {
-    intro.classList.add('fade-out');
-    site.style.opacity = '1';
-    setTimeout(() => { intro.classList.add('gone'); }, 550);
-  }, 150);
-}, 2600);
+  site.style.opacity = '1';      // sitio visible
+  intro.classList.add('gone');   // intro desaparece instantáneamente (display:none)
+}, 2300);
 
 // ─── SCROLL ANIMATIONS ───────────────────────────────────────────────
 const obs = new IntersectionObserver(entries => {
